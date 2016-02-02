@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
+using System.Threading;
 
 namespace Fitbit.Api.Portable
 {
@@ -14,17 +11,18 @@ namespace Fitbit.Api.Portable
 
         public OAuth2Authorization(string bearerToken, string refreshToken)
         {
-            this.RefreshToken = refreshToken;
-            this.BearerToken = bearerToken;
+            RefreshToken = refreshToken;
+            BearerToken = bearerToken;
         }
 
-        public HttpClient ConfigureHttpClientAUthorization(HttpClient httpClient)
+        public void InterceptRequest(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            AuthenticationHeaderValue authenticationHeaderValue = new AuthenticationHeaderValue("Bearer", BearerToken);
-            httpClient.DefaultRequestHeaders.Authorization = authenticationHeaderValue;
-
-            return httpClient;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerToken);
         }
 
+        public void InterceptResponse(HttpResponseMessage response, CancellationToken cancellationToken)
+        {
+            // nothing to see here
+        }
     }
 }

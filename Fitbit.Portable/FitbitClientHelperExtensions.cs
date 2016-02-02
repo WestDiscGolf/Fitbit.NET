@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using Fitbit.Models;
 
 namespace Fitbit.Api.Portable
@@ -90,6 +91,27 @@ namespace Fitbit.Api.Portable
             seconds += (dateTime.Minute*60); // seconds in minutes
             seconds += (dateTime.Hour*60*60); // seconds in hours
             return seconds;
+        }
+
+        /// <summary>
+        /// Creates the processing request pipeline using the message handlers
+        /// </summary>
+        /// <param name="authorization"></param>
+        /// <param name="interceptors"></param>
+        /// <returns></returns>
+        internal static HttpMessageHandler CreatePipeline(IAuthorization authorization, params IFitbitClientInterceptor[] interceptors)
+        {
+            FitbitMessageHandler pipeline = new FitbitMessageHandler(authorization);
+
+            // inspired by the code referenced from the web api source; this creates the russian doll effect
+            foreach (var handler in interceptors)
+            {
+                var messageHandler = new FitbitMessageHandler(handler);
+                messageHandler.InnerHandler = pipeline;
+                pipeline = messageHandler;
+            }
+
+            return pipeline;
         }
     }
 }

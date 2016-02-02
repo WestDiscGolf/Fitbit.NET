@@ -74,8 +74,6 @@ namespace Fitbit.Api.Portable
             return accessToken;
         }
 
-
-
         public async Task<OAuth2AccessToken> RefreshAccessToken(OAuth2AccessToken accessToken)
         {
             string postUrl = GenerateFitbitOAuthPostUrl();
@@ -85,8 +83,7 @@ namespace Fitbit.Api.Portable
                 new KeyValuePair<string, string>("grant_type", "refresh_token"),
                 new KeyValuePair<string, string>("refresh_token", accessToken.RefreshToken),
             });
-
-
+            
             var httpClient = new HttpClient();
 
             var clientIdConcatSecret = Base64Encode(ClientId + ":" + AppSecret);
@@ -145,6 +142,5 @@ namespace Fitbit.Api.Portable
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
             return System.Convert.ToBase64String(plainTextBytes);
         }
-
     }
 }

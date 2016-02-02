@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using Fitbit.Api;
 using System.Configuration;
+using System.Diagnostics;
+using System.Net.Http;
+using System.Threading;
 using Fitbit.Models;
 using Fitbit.Api.Portable;
 using System.Threading.Tasks;
@@ -211,9 +214,25 @@ namespace SampleWebMVC.Controllers
         {
             OAuth2Authorization authorization = new OAuth2Authorization(bearerToken, refreshToken);
 
-            FitbitClient client = new FitbitClient(authorization);
+            FitbitClient client = new FitbitClient(authorization, new Logger());
 
             return client;
+        }
+    }
+
+    /// <summary>
+    /// Example interceptor
+    /// </summary>
+    public class Logger : IFitbitClientInterceptor
+    {
+        public void InterceptRequest(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            Debug.WriteLine("Entering Http client's request message handler. Request details: {0}", request);
+        }
+
+        public void InterceptResponse(HttpResponseMessage response, CancellationToken cancellationToken)
+        {
+            Debug.WriteLine("Entering Http client's response message handler. Response details: {0}", response);
         }
     }
 }

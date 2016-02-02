@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-
-namespace Fitbit.Api.Portable
+﻿namespace Fitbit.Api.Portable
 {
-    public interface IAuthorization
+    /// <summary>
+    /// A special interceptor which deals with setting authorization details
+    /// </summary>
+    public interface IAuthorization : IFitbitClientInterceptor
     {
-        HttpClient ConfigureHttpClientAUthorization(HttpClient client);
+
     }
 }

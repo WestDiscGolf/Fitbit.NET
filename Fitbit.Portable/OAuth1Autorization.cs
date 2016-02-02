@@ -6,49 +6,52 @@ using System.Text;
 
 namespace Fitbit.Api.Portable
 {
-    public class OAuth1Autorization : IAuthorization
-    {
-        private string _consumerKey;
-        private string _consumerSecret;
-        private string _accessToken;
-        private string _accessSecret;
+    // could be done - https://github.com/neuecc/AsyncOAuth/blob/master/AsyncOAuth/OAuthMessageHandler.cs
+    // however not worth the effort as oauth1 is dead
 
-        public OAuth1Autorization(string consumerKey, string consumerSecret, string accessToken, string accessSecret)
-        {
-            _consumerKey = consumerKey;
-            _consumerSecret = consumerSecret;
-            _accessToken = accessToken;
-            _accessSecret = accessSecret;
-        }
+    //public class OAuth1Autorization : IAuthorization
+    //{
+    //    private string _consumerKey;
+    //    private string _consumerSecret;
+    //    private string _accessToken;
+    //    private string _accessSecret;
 
-        public HttpClient ConfigureHttpClientAUthorization(HttpClient client)
-        {
-            #region Parameter checking
-            if (string.IsNullOrWhiteSpace(_consumerKey))
-            {
-                throw new ArgumentNullException("consumerKey", "ConsumerKey must not be empty or null");
-            }
+    //    public OAuth1Autorization(string consumerKey, string consumerSecret, string accessToken, string accessSecret)
+    //    {
+    //        _consumerKey = consumerKey;
+    //        _consumerSecret = consumerSecret;
+    //        _accessToken = accessToken;
+    //        _accessSecret = accessSecret;
+    //    }
 
-            if (string.IsNullOrWhiteSpace(_consumerSecret))
-            {
-                throw new ArgumentNullException("consumerSecret", "ConsumerSecret must not be empty or null");
-            }
+    //    public HttpClient ConfigureHttpClientAUthorization(HttpClient client)
+    //    {
+    //        #region Parameter checking
+    //        if (string.IsNullOrWhiteSpace(_consumerKey))
+    //        {
+    //            throw new ArgumentNullException("consumerKey", "ConsumerKey must not be empty or null");
+    //        }
 
-            if (string.IsNullOrWhiteSpace(_accessToken))
-            {
-                throw new ArgumentNullException("accessToken", "AccessToken must not be empty or null");
-            }
+    //        if (string.IsNullOrWhiteSpace(_consumerSecret))
+    //        {
+    //            throw new ArgumentNullException("consumerSecret", "ConsumerSecret must not be empty or null");
+    //        }
 
-            if (string.IsNullOrWhiteSpace(_accessSecret))
-            {
-                throw new ArgumentNullException("accessSecret", "AccessSecret must not be empty or null");
-            }
-            #endregion
+    //        if (string.IsNullOrWhiteSpace(_accessToken))
+    //        {
+    //            throw new ArgumentNullException("accessToken", "AccessToken must not be empty or null");
+    //        }
 
-            HttpClient httpClient = AsyncOAuth.OAuthUtility.CreateOAuthClient(_consumerKey, _consumerSecret, new AsyncOAuth.AccessToken(_accessToken, _accessSecret));
+    //        if (string.IsNullOrWhiteSpace(_accessSecret))
+    //        {
+    //            throw new ArgumentNullException("accessSecret", "AccessSecret must not be empty or null");
+    //        }
+    //        #endregion
 
-            return httpClient;
+    //        HttpClient httpClient = AsyncOAuth.OAuthUtility.CreateOAuthClient(_consumerKey, _consumerSecret, new AsyncOAuth.AccessToken(_accessToken, _accessSecret));
 
-        }
-    }
+    //        return httpClient;
+
+    //    }
+    //}
 }
