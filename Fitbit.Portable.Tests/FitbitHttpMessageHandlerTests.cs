@@ -1,4 +1,6 @@
-﻿namespace Fitbit.Portable.Tests
+﻿using Fitbit.Api.Portable.Security;
+
+namespace Fitbit.Portable.Tests
 {
     using System;
     using System.Net.Http;
@@ -6,7 +8,6 @@
     using System.Threading;
     using Fitbit.Api.Portable;
     using NUnit.Framework;
-    using Fitbit.Api.Portable.OAuth2;
     using Fitbit.Portable.Tests.Helpers;
     using Moq;
     [TestFixture]
@@ -64,7 +65,7 @@
             var refreshedToken = new OAuth2AccessToken() { Token = "Refreshed" };
 
             //mocking our implementation of token manager. This test is concerned with ensuring the wiring is done correctly. Not the actual refresh process.
-            var fakeManager = new Mock<ITokenManager>();
+            var fakeManager = new Mock<IOAuth2TokenManager>();
             fakeManager.Setup(m => m.RefreshTokenAsync(It.IsAny<FitbitClient>())).Returns(() => Task.Run(() => refreshedToken));
 
             //we shortcircuit the request to fake an expired token on the first request, and assuming the token is different the second time we let the request through
@@ -97,7 +98,7 @@
             var refreshedToken = new OAuth2AccessToken() { Token = "Refreshed" };
 
             //mocking our implementation of token manager. This test is concerned with ensuring the wiring is done correctly. Not the actual refresh process.
-            var fakeManager = new Mock<ITokenManager>();
+            var fakeManager = new Mock<IOAuth2TokenManager>();
             fakeManager.Setup(m => m.RefreshTokenAsync(It.IsAny<FitbitClient>())).Returns(() => Task.Run(() => refreshedToken));
 
             //simulate failed refresh token. 
@@ -122,7 +123,7 @@
             var refreshedToken = new OAuth2AccessToken() { Token = "Refreshed" };
 
             //mocking our implementation of token manager. This test is concerned with ensuring the wiring is done correctly. Not the actual refresh process.
-            var fakeManager = new Mock<ITokenManager>();
+            var fakeManager = new Mock<IOAuth2TokenManager>();
             fakeManager.Setup(m => m.RefreshTokenAsync(It.IsAny<FitbitClient>())).Returns(() => Task.Run(() => refreshedToken));
 
             //we shortcircuit the request to return a stale token and ensure that the client lets the stale token response through

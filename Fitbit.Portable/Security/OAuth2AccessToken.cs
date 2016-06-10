@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Fitbit.Api.Portable.OAuth2
+namespace Fitbit.Api.Portable.Security
 {
     public class OAuth2AccessToken
     {
@@ -29,8 +29,9 @@ namespace Fitbit.Api.Portable.OAuth2
         public bool IsFresh()
         {
             if (DateTime.MinValue == UtcExpirationDate)
-                throw new InvalidOperationException(
-                    $"The {nameof(UtcExpirationDate)} property needs to be set before using this method.");
+            {
+                throw new InvalidOperationException($"The {nameof(UtcExpirationDate)} property needs to be set before using this method.");
+            }
             return DateTime.Compare(DateTime.UtcNow, UtcExpirationDate) < 0;
         }
     }

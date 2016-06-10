@@ -1,16 +1,10 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Fitbit.Models;
 
-namespace Fitbit.Api.Portable.OAuth2
+namespace Fitbit.Api.Portable.Security
 {
     /// <summary>
     /// An Http interceptor that intercepts "stale token" responses and invokes the Token Manager of the FitbitClient to get a new token.

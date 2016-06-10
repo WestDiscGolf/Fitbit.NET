@@ -4,8 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Fitbit.Api.Portable.OAuth2;
 using System.Net.Http.Headers;
+using Fitbit.Api.Portable.Security;
 using Fitbit.Models;
 
 namespace Fitbit.Api.Portable
@@ -26,7 +26,9 @@ namespace Fitbit.Api.Portable
                 _accesToken = value;
                 //If we update the AccessToken after HttpClient has been created, then reconfigure authorization header
                 if (HttpClient != null)
+                {
                     ConfigureAuthorizationHeader();
+                }
             }
         }
 
@@ -35,9 +37,9 @@ namespace Fitbit.Api.Portable
         /// </summary>
         public HttpClient HttpClient { get; private set; }
 
-        public ITokenManager TokenManager { get; private set; }
+        public IOAuth2TokenManager TokenManager { get; private set; }
         public bool OAuth2TokenAutoRefresh { get; set; }
-        public List<IFitbitInterceptor> FitbitInterceptorPipeline { get; private set; }
+        private List<IFitbitInterceptor> FitbitInterceptorPipeline { get; set; }
 
         /// <summary>
         /// Simplest constructor for OAuth2- requires the minimum information required by FitBit.Net client to make succesful calls to Fitbit Api
@@ -45,17 +47,16 @@ namespace Fitbit.Api.Portable
         /// <param name="credentials">Obtain this information from your developer dashboard. App credentials are required to perform token refresh</param>
         /// <param name="accessToken">Authenticate with Fitbit API using OAuth2. Authenticator2 class is a helper for this process</param>
         /// <param name="interceptor">An interface that enables sniffing all outgoing and incoming http requests from FitbitClient</param>
-        public FitbitClient(FitbitAppCredentials credentials, OAuth2AccessToken accessToken, IFitbitInterceptor interceptor = null, bool enableOAuth2TokenRefresh = true, ITokenManager tokenManager = null)
+        public FitbitClient(FitbitAppCredentials credentials, OAuth2AccessToken accessToken, IFitbitInterceptor interceptor = null, bool enableOAuth2TokenRefresh = true, IOAuth2TokenManager tokenManager = null)
         {
-            this.AppCredentials = credentials;
-            this.AccessToken = accessToken;
+            AppCredentials = credentials;
+            AccessToken = accessToken;
 
-            this.FitbitInterceptorPipeline = new List<IFitbitInterceptor>();
-
-
+            FitbitInterceptorPipeline = new List<IFitbitInterceptor>();
+            
             if(interceptor != null)
             {
-                this.FitbitInterceptorPipeline.Add(interceptor);
+                FitbitInterceptorPipeline.Add(interceptor);
             }
 
             ConfigureTokenManager(tokenManager);
@@ -68,10 +69,11 @@ namespace Fitbit.Api.Portable
 
         private void ConfigureAutoRefresh(bool enableOAuth2TokenRefresh)
         {
-            this.OAuth2TokenAutoRefresh = enableOAuth2TokenRefresh;
-            if(OAuth2TokenAutoRefresh)
-                this.FitbitInterceptorPipeline.Add(new OAuth2AutoRefreshInterceptor());
-            return;
+            OAuth2TokenAutoRefresh = enableOAuth2TokenRefresh;
+            if (OAuth2TokenAutoRefresh)
+            {
+                FitbitInterceptorPipeline.Add(new OAuth2AutoRefreshInterceptor());
+            }
         }
 
         /// <summary>
@@ -80,7 +82,7 @@ namespace Fitbit.Api.Portable
         /// <param name="credentials">Obtain this information from your developer dashboard. App credentials are required to perform token refresh</param>
         /// <param name="accessToken">Authenticate with Fitbit API using OAuth2. Authenticator2 class is a helper for this process</param>
         /// <param name="interceptor">An interface that enables sniffing all outgoing and incoming http requests from FitbitClient</param>
-        public FitbitClient(FitbitAppCredentials credentials, OAuth2AccessToken accessToken, List <IFitbitInterceptor> interceptors, bool enableOAuth2TokenRefresh = true, ITokenManager tokenManager = null)
+        public FitbitClient(FitbitAppCredentials credentials, OAuth2AccessToken accessToken, List <IFitbitInterceptor> interceptors, bool enableOAuth2TokenRefresh = true, IOAuth2TokenManager tokenManager = null)
         {
             this.AppCredentials = credentials;
             this.AccessToken = accessToken;
@@ -108,12 +110,12 @@ namespace Fitbit.Api.Portable
 
         }
 
-        public FitbitClient(FitbitAppCredentials credentials, OAuth2AccessToken accessToken, List<IFitbitInterceptor> interceptors, ITokenManager tokenManager) : this(credentials, accessToken, interceptors, true, tokenManager)
+        public FitbitClient(FitbitAppCredentials credentials, OAuth2AccessToken accessToken, List<IFitbitInterceptor> interceptors, IOAuth2TokenManager tokenManager) : this(credentials, accessToken, interceptors, true, tokenManager)
         {
 
         }
 
-        public FitbitClient(FitbitAppCredentials credentials, OAuth2AccessToken accessToken, IFitbitInterceptor interceptor, ITokenManager tokenManager) : this(credentials, accessToken, interceptor, true, tokenManager)
+        public FitbitClient(FitbitAppCredentials credentials, OAuth2AccessToken accessToken, IFitbitInterceptor interceptor, IOAuth2TokenManager tokenManager) : this(credentials, accessToken, interceptor, true, tokenManager)
         {
 
         }
@@ -123,7 +125,7 @@ namespace Fitbit.Api.Portable
         /// </summary>
         /// <param name="customFactory">A function or lambda expression who is in charge of creating th HttpClient. It takes as an argument a HttpMessageHandler which does wiring for IFitbitInterceptor. To use IFitbitInterceptor you must pass this HttpMessageHandler as anargument to the constuctor of HttpClient</param>
         /// <param name="interceptor">An interface that enables sniffing all outgoing and incoming http requests from FitbitClient</param>
-        public FitbitClient(Func<HttpMessageHandler, HttpClient> customFactory, IFitbitInterceptor interceptor = null, ITokenManager tokenManager = null)
+        public FitbitClient(Func<HttpMessageHandler, HttpClient> customFactory, IFitbitInterceptor interceptor = null, IOAuth2TokenManager tokenManager = null)
         {
             this.OAuth2TokenAutoRefresh = false;
 
@@ -131,10 +133,10 @@ namespace Fitbit.Api.Portable
             this.HttpClient = customFactory(new FitbitHttpMessageHandler(this, interceptor));
         }
 
-        private void ConfigureTokenManager(ITokenManager tokenManager)
+        private void ConfigureTokenManager(IOAuth2TokenManager tokenManager)
         {
-            TokenManager = tokenManager ?? new DefaultTokenManager();
-            }
+            TokenManager = tokenManager ?? new DefaultOAuth2TokenManager();
+        }
 
         private void CreateHttpClientForOAuth2()
         {
@@ -149,14 +151,12 @@ namespace Fitbit.Api.Portable
 
         private void ConfigureAuthorizationHeader()
         {
-            AuthenticationHeaderValue authenticationHeaderValue = new AuthenticationHeaderValue("Bearer", AccessToken.Token);
-            HttpClient.DefaultRequestHeaders.Authorization = authenticationHeaderValue;
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken.Token);
         }
 
-        public async Task<OAuth2AccessToken> RefreshOAuth2TokenAsync()
+        public Task<OAuth2AccessToken> RefreshOAuth2TokenAsync()
         {
-            AccessToken = await TokenManager.RefreshTokenAsync(this);
-            return AccessToken;
+            return TokenManager.RefreshTokenAsync(this);
         }
         
         /// <summary>

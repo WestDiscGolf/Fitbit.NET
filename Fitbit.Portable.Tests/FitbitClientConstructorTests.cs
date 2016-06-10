@@ -1,5 +1,4 @@
 ﻿using Fitbit.Api.Portable;
-using Fitbit.Api.Portable.OAuth2;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
+using Fitbit.Api.Portable.Security;
 
 namespace Fitbit.Portable.Tests
 {

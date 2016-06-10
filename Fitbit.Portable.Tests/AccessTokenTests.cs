@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Fitbit.Api.Portable;
-using Fitbit.Api.Portable.OAuth2;
+using Fitbit.Api.Portable.Security;
 using FluentAssertions;
 using NUnit.Framework;
 using Ploeh.AutoFixture;
