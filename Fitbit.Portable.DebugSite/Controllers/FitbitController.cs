@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Web.Mvc;
-using Fitbit.Api;
 using System.Configuration;
 using Fitbit.Models;
 using Fitbit.Api.Portable;
 using System.Threading.Tasks;
-using Fitbit.Api.Portable.OAuth2;
+using System.Web.Mvc;
+using Fitbit.Api.Portable.Security;
 
 namespace SampleWebMVC.Controllers
 {
@@ -72,7 +70,8 @@ namespace SampleWebMVC.Controllers
         {
             var fitbitClient = GetFitbitClient();
 
-            ViewBag.AccessToken = await fitbitClient.RefreshOAuth2Token();
+            await fitbitClient.RefreshOAuth2TokenAsync();
+            ViewBag.AccessToken = fitbitClient.AccessToken;
 
             return View("Callback");
         }
