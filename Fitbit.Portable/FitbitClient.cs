@@ -154,9 +154,9 @@ namespace Fitbit.Api.Portable
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken.Token);
         }
 
-        public Task<OAuth2AccessToken> RefreshOAuth2TokenAsync()
+        public async Task RefreshOAuth2TokenAsync()
         {
-            return TokenManager.RefreshTokenAsync(this);
+            AccessToken = await TokenManager.RefreshTokenAsync(this);
         }
         
         /// <summary>

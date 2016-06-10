@@ -28,7 +28,6 @@ namespace Fitbit.Api.Portable.Interceptors
 
         }
 
-
         private async Task GenerateFitbitRequestException(HttpResponseMessage response)
         {
             List<ApiError> errors = null;
