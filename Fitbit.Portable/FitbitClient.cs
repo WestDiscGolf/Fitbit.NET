@@ -368,8 +368,8 @@ namespace Fitbit.Api.Portable
         {
             string apiCall;
 
-            if (intraDayTimeSpan > new TimeSpan(0, 1, 0) && //the timespan is greater than a minute
-                dayAndStartTime.Day == dayAndStartTime.Add(intraDayTimeSpan).Day) //adding the timespan doesn't go in to the next day
+            if (intraDayTimeSpan > new TimeSpan(0, 1, 0)  //the timespan is greater than a minute
+                && dayAndStartTime.Day == dayAndStartTime.Add(intraDayTimeSpan).Day) //adding the timespan doesn't go in to the next day
             {
                 apiCall = string.Format("/1/user/-{0}/date/{1}/1d/time/{2}/{3}.json",
                                         timeSeriesResourceType.GetStringValue(),
@@ -390,7 +390,7 @@ namespace Fitbit.Api.Portable
             await HandleResponse(response);
             string responseBody = await response.Content.ReadAsStringAsync();
             var serializer = new JsonDotNetSerializer { RootProperty = timeSeriesResourceType.ToTimeSeriesProperty() };
-            return serializer.GetIntradayTimeSeriesData(responseBody);
+            return serializer.GetIntradayTimeSeriesData(responseBody, dayAndStartTime);
         }
 
         /// <summary>

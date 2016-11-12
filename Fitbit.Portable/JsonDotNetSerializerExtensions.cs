@@ -135,7 +135,7 @@ namespace Fitbit.Api.Portable
             return result;
         }
 
-        internal static IntradayData GetIntradayTimeSeriesData(this JsonDotNetSerializer serializer, string intradayDataJson)
+        internal static IntradayData GetIntradayTimeSeriesData(this JsonDotNetSerializer serializer, string intradayDataJson, DateTime dateTime)
         {
             if (string.IsNullOrWhiteSpace(intradayDataJson))
             {
@@ -145,7 +145,6 @@ namespace Fitbit.Api.Portable
             var parsedJToken = JToken.Parse(intradayDataJson);
 
             // need to parse the date first  
-            var date = parsedJToken.SelectToken(serializer.RootProperty).First["dateTime"];
             var dataPoints = parsedJToken.SelectTokens(serializer.RootProperty + "-intraday.dataset");
 
             var result = new IntradayData
@@ -153,7 +152,7 @@ namespace Fitbit.Api.Portable
                 DataSet = (from item in dataPoints.Children()
                     select new IntradayDataValues
                     {
-                        Time = DateTime.Parse(date + " " + item["time"]),
+                        Time = DateTime.Parse(dateTime.ToString("yyyy-MM-dd") + " " + item["time"]),
                         Value = item["value"].ToObject<double>().ToString("R"), //converting to double is required to keep precision
                         METs = item["mets"] != null ? item["mets"].ToString() : null,
                         Level = item["level"] != null ? item["level"].ToString() : null
