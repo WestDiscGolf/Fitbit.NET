@@ -1,16 +1,21 @@
-﻿namespace Fitbit.Api.Portable.OAuth2
-{
-    using System.Collections.Generic;
-    using System.Net.Http;
-    using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 
-    internal class DefaultTokenManager : ITokenManager
+namespace Fitbit.Api.Portable.OAuth2
+{
+    public class DefaultTokenManager : ITokenManager
     {
-        private static string FitbitOauthPostUrl => "https://api.fitbit.com/oauth2/token";
+        private readonly FitbitAppCredentials _credentials;
+
+        public DefaultTokenManager(FitbitAppCredentials credentials)
+        {
+            _credentials = credentials;
+        }
 
         public async Task<OAuth2AccessToken> RefreshTokenAsync(FitbitClient client)
         {
-            string postUrl = FitbitOauthPostUrl;
+            string postUrl = Constants.OAuth2TokenUrl;
 
             var content = new FormUrlEncodedContent(new[]
             {
@@ -28,7 +33,7 @@
                 httpClient = client.HttpClient;
             }
 
-            var clientIdConcatSecret = OAuth2Helper.Base64Encode(client.AppCredentials.ClientId + ":" + client.AppCredentials.ClientSecret);
+            var clientIdConcatSecret = OAuth2Helper.Base64Encode(_credentials.ClientId + ":" + _credentials.ClientSecret);
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", clientIdConcatSecret);
 
             HttpResponseMessage response = await httpClient.PostAsync(postUrl, content);

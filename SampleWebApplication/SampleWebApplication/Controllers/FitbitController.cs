@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Web.Mvc;
-using Fitbit.Api;
 using System.Configuration;
 using Fitbit.Models;
 using Fitbit.Api.Portable;
@@ -12,7 +10,7 @@ namespace SampleWebMVC.Controllers
 {
     public class FitbitController : Controller
     {
-        public static string[] AllScopes = new string[] { "activity ", "nutrition ", "heartrate ", "location ", "nutrition ", "profile ", "settings ", "sleep ", "social ", "weight" };
+        public static string[] AllScopes = new string[] { "activity", "nutrition", "heartrate", "location", "nutrition", "profile", "settings", "sleep", "social", "weight" };
 
         public ActionResult Index()
         {
@@ -219,7 +217,8 @@ namespace SampleWebMVC.Controllers
                 if (accessToken != null)
                 {
                     var appCredentials = (FitbitAppCredentials)Session["AppCredentials"];
-                    FitbitClient client = new FitbitClient(appCredentials, accessToken);
+                    var tokenManager = new DefaultTokenManager(appCredentials);
+                    FitbitClient client = new FitbitClient(accessToken, tokenManager: tokenManager);
                     Session["FitbitClient"] = client;
                     return client;
                 }

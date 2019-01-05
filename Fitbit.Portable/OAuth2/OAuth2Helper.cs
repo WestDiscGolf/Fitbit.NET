@@ -10,8 +10,6 @@ namespace Fitbit.Api.Portable.OAuth2
     public class OAuth2Helper
     {
         private const string FitbitWebAuthBaseUrl = "https://www.fitbit.com";
-        private const string FitbitApiBaseUrl = "https://api.fitbit.com";
-
         private const string OAuthBase = "/oauth2";
 
         private string ClientId;
@@ -25,6 +23,7 @@ namespace Fitbit.Api.Portable.OAuth2
             this.ClientSecret = credentials.ClientSecret;
             this.RedirectUri = redirectUri;
         }
+
         public string GenerateAuthUrl(string[] scopeTypes, string state = null)
         {
             var sb = new StringBuilder();
@@ -47,7 +46,7 @@ namespace Fitbit.Api.Portable.OAuth2
         {
             HttpClient httpClient = new HttpClient();
 
-            string postUrl = OAuth2Helper.FitbitOauthPostUrl;
+            string postUrl = Constants.OAuth2TokenUrl;
 
             var content = new FormUrlEncodedContent(new[]
             {
@@ -70,9 +69,6 @@ namespace Fitbit.Api.Portable.OAuth2
 
             return accessToken;
         }
-
-        public static readonly string FitbitOauthPostUrl = "https://api.fitbit.com/oauth2/token";
-
 
         public static OAuth2AccessToken ParseAccessTokenResponse(string responseString)
         {
