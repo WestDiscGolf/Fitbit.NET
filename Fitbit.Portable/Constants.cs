@@ -2,11 +2,13 @@
 {
     internal class Constants
     {
-        public const string BaseApiUrl = "https://api.fitbit.com/";
-        public const string TemporaryCredentialsRequestTokenUri = "oauth/request_token";
-        public const string TemporaryCredentialsAccessTokenUri = "oauth/access_token";
-        public const string AuthorizeUri = "oauth/authorize";
-        public const string LogoutAndAuthorizeUri = "oauth/logout_and_authorize";
+        public static string BaseApiUrl => "https://api.fitbit.com/";
+
+        /// <summary>
+        /// The fitbit api url for oAuth2 token request
+        /// </summary>
+        public static string OAuth2TokenUrl => $"{BaseApiUrl}oauth2/token";
+
         public const string FloorsUnsupportedOnDeviceError = "Invalid time series resource path: /activities/floors";
 
         public class Headers

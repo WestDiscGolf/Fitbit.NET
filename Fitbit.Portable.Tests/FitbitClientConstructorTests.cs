@@ -1,11 +1,6 @@
 ﻿using Fitbit.Api.Portable;
 using Fitbit.Api.Portable.OAuth2;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net.Http;
 
 namespace Fitbit.Portable.Tests
@@ -17,10 +12,9 @@ namespace Fitbit.Portable.Tests
         [Category("constructor")]
         public void Most_Basic()
         {
-            var credentials = new FitbitAppCredentials() { ClientId = "SomeID", ClientSecret = "THE Secret ;)" };
             var accessToken = new OAuth2AccessToken() { Token = "", TokenType = "", ExpiresIn = 3600, RefreshToken = ""};
 
-            var sut = new FitbitClient(credentials, accessToken);
+            var sut = new FitbitClient(accessToken);
 
             Assert.IsNotNull(sut.HttpClient);
         }
@@ -38,11 +32,10 @@ namespace Fitbit.Portable.Tests
         [Category("constructor")]
         public void Can_Instantiate_Without_Any_Interceptors()
         {
-            var credentials = new FitbitAppCredentials() { ClientId = "SomeID", ClientSecret = "THE Secret ;)" };
             var accessToken = new OAuth2AccessToken() { Token = "", TokenType = "", ExpiresIn = 3600, RefreshToken = "" };
 
             //Ensure not even the auto-token-refresh interceptor is active
-            var sut = new FitbitClient(credentials, accessToken, false);
+            var sut = new FitbitClient(accessToken, enableOAuth2TokenRefresh: false);
 
             Assert.IsNotNull(sut.HttpClient);
         }
@@ -51,11 +44,10 @@ namespace Fitbit.Portable.Tests
         [Category("constructor")]
         public void Can_Use_Interceptors_Without_Autorefresh()
         {
-            var credentials = new FitbitAppCredentials() { ClientId = "SomeID", ClientSecret = "THE Secret ;)" };
             var accessToken = new OAuth2AccessToken() { Token = "", TokenType = "", ExpiresIn = 3600, RefreshToken = "" };
 
-            //Registere an interceptor, but disable the auto-token-refresh interceptor
-            var sut = new FitbitClient(credentials, accessToken, new InterceptorCounter(), false);
+            //Register an interceptor, but disable the auto-token-refresh interceptor
+            var sut = new FitbitClient(accessToken, new InterceptorCounter(), false);
 
             Assert.IsNotNull(sut.HttpClient);
         }

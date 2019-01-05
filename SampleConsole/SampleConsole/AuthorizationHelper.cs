@@ -20,7 +20,9 @@ namespace SampleConsole
             // try to retrieve the token from disk
             OAuth2AccessToken token = GetAccessTokenAsync(scopes).Result;
 
-            return new FitbitClient(new FitbitAppCredentials() { ClientId = Options.ClientId, ClientSecret = Options.ClientSecret }, token, true);
+            var tokenManager = new DefaultTokenManager(new FitbitAppCredentials { ClientId = Options.ClientId, ClientSecret = Options.ClientSecret });
+
+            return new FitbitClient(token, tokenManager: tokenManager);
         }
 
         public static async Task<OAuth2AccessToken> GetAccessTokenAsync(params string[] scopes)
@@ -79,6 +81,7 @@ namespace SampleConsole
         {
             Colorizer.WriteLine("Sending authorization request...");
             string scope = string.Join("%20", scopes);
+            
             string authorizeUrl = $"https://www.fitbit.com/oauth2/authorize?response_type=code&client_id={Options.ClientId}&scope={scope}&expires_in=86400";
             Process.Start(authorizeUrl);
 

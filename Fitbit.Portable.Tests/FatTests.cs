@@ -6,6 +6,7 @@ using System.Threading;
 using NUnit.Framework;
 using AutoFixture;
 using System.Threading.Tasks;
+using AutoFixture.AutoMoq;
 using Fitbit.Api.Portable;
 using Fitbit.Models;
 
@@ -20,6 +21,7 @@ namespace Fitbit.Portable.Tests
         public void Init()
         {
             fixture = new Fixture();
+            fixture.Customize(new AutoMoqCustomization());
         }
 
         [Test]
